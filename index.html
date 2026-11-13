@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Short 'i' Phonics Games</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;700&display=swap');
+
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+            min-height: 100vh;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h1, h2, h3, .brand-font {
+            font-family: 'Fredoka One', cursive;
+        }
+
+        /* Bounce animation for correct answers */
+        @keyframes bounce-scale {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        .animate-bounce-scale {
+            animation: bounce-scale 0.5s ease-in-out;
+        }
+
+        /* Shake animation for wrong answers */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            50% { transform: translateX(10px); }
+            75% { transform: translateX(-10px); }
+        }
+        .animate-shake {
+            animation: shake 0.4s ease-in-out;
+        }
+
+        .hide {
+            display: none !important;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div id="app-container" class="max-w-4xl mx-auto w-full p-4 flex-grow flex flex-col relative">
+        
+        <!-- Header -->
+        <header class="text-center py-6">
+            <h1 class="text-4xl md:text-5xl text-purple-600 drop-shadow-md">Phonics Fun!</h1>
+            <p class="text-xl text-gray-700 mt-2 font-bold">Short 'i' Sound (/ɪ/)</p>
+        </header>
+
+        <!-- Main Content Area -->
+        <main id="main-content" class="bg-white/80 backdrop-blur-md rounded-3xl shadow-xl p-6 md:p-10 flex-grow flex flex-col justify-center items-center border-4 border-white">
+            <!-- Content will be injected by JS -->
+        </main>
+
+        <!-- Footer -->
+        <footer class="text-center py-4 text-sm text-gray-600 font-bold">
+            Learn English Short 'i' Words with Amharic Equivalents
+        </footer>
+    </div>
+
+    <script>
+        // Vocabulary Data based on the provided document
+        const wordsData = [
+            { eng: "Lip", amh: "ከንፈር", pron: "Kenfer", ph_start: "L", ph_rest: "ip", img: "https://placehold.co/300x300/FFB6C1/ffffff?text=Lip" },
+            { eng: "Pig", amh: "አሳማ", pron: "Asama", ph_start: "P", ph_rest: "ig", img: "https://placehold.co/300x300/FFDAB9/ffffff?text=Pig" },
+            { eng: "Bin", amh: "የቆሻሻ መጣያ", pron: "Yekoshasha metaya", ph_start: "B", ph_rest: "in", img: "https://placehold.co/300x300/98FB98/ffffff?text=Bin" },
+            { eng: "Six", amh: "ስድስት", pron: "Sidist", ph_start: "S", ph_rest: "ix", img: "https://placehold.co/300x300/87CEFA/ffffff?text=Six" },
+            { eng: "Kid", amh: "ልጅ", pron: "Lij", ph_start: "K", ph_rest: "id", img: "https://placehold.co/300x300/DDA0DD/ffffff?text=Kid" },
+            { eng: "Sit", amh: "መቀመጥ", pron: "Mekemet", ph_start: "S", ph_rest: "it", img: "https://placehold.co/300x300/F0E68C/ffffff?text=Sit" },
+            { eng: "Mix", amh: "መቀላቀል", pron: "Mekelakel", ph_start: "M", ph_rest: "ix", img: "https://placehold.co/300x300/FFA07A/ffffff?text=Mix" },
+            { eng: "Dig", amh: "መቆፈር", pron: "Mekofer", ph_start: "D", ph_rest: "ig", img: "https://placehold.co/300x300/20B2AA/ffffff?text=Dig" },
+            { eng: "Zip", amh: "ዚፕ", pron: "Zip", ph_start: "Z", ph_rest: "ip", img: "https://placehold.co/300x300/B0C4DE/ffffff?text=Zip" },
+            { eng: "Fin", amh: "የዓሳ ክንፍ", pron: "Ye'asa kinf", ph_start: "F", ph_rest: "in", img: "https://placehold.co/300x300/40E0D0/ffffff?text=Fin" }
+        ];
+
+        // --- Audio Setup (Web Speech API) ---
+        let voices = [];
+        let englishVoice = null;
+
+        function loadVoices() {
+            voices = speechSynthesis.getVoices();
+            // Try to find a female UK voice. Fallback to any UK, then any English.
+            englishVoice = voices.find(v => v.lang === 'en-GB' && (v.name.includes('Female') || v.name.includes('Google'))) || 
+                           voices.find(v => v.lang === 'en-GB') || 
+                           voices.find(v => v.lang.startsWith('en'));
+        }
+
+        if (speechSynthesis.onvoiceschanged !== undefined) {
+            speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function playAudio(text) {
+            if (!text) return;
+            const utterance = new SpeechSynthesisUtterance(text);
+            if (englishVoice) {
+                utterance.voice = englishVoice;
+            }
+            utterance.lang = 'en-GB';
+            utterance.rate = 0.9; // Slightly slower for kids
+            utterance.pitch = 1.2; // Slightly higher pitch
+            speechSynthesis.speak(utterance);
+        }
+
+        // --- Utility Components ---
+        const SVGS = {
+            audio: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.5 10H2v4h3.5l5 5V5l-5 5z" /></svg>`,
+            home: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" /></svg>`,
+            arrowRight: `<svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" /></svg>`
+        };
+
+        function getAudioBtnHtml(text, extraClasses = "") {
+            return `<button onclick="event.stopPropagation(); playAudio('${text.replace(/'/g, "\\'")}')" 
+                    class="bg-blue-400 hover:bg-blue-500 text-white p-3 rounded-full shadow-lg transform transition hover:scale-110 active:scale-95 ${extraClasses}" 
+                    title="Listen">
+                    ${SVGS.audio}
+                    </button>`;
+        }
+
+        // --- App State & Navigation ---
+        const mainContent = document.getElementById('main-content');
+        let currentItemIndex = 0;
+        let score = 0;
+
+        function renderMenu() {
+            mainContent.innerHTML = `
+                <h2 class="text-3xl brand-font text-pink-500 mb-8 text-center">Choose a Game!</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-2xl">
+                    <button onclick="startMode('flashcards')" class="bg-yellow-300 hover:bg-yellow-400 text-yellow-900 rounded-2xl p-6 shadow-xl transform transition hover:-translate-y-2 font-bold text-xl flex flex-col items-center gap-2 border-4 border-yellow-200">
+                        <span class="text-4xl">🃏</span>
+                        Interactive Flashcards
+                    </button>
+                    <button onclick="startMode('listenMatch')" class="bg-green-400 hover:bg-green-500 text-green-900 rounded-2xl p-6 shadow-xl transform transition hover:-translate-y-2 font-bold text-xl flex flex-col items-center gap-2 border-4 border-green-300">
+                        <span class="text-4xl">🎧</span>
+                        Listen & Match
+                    </button>
+                    <button onclick="startMode('phonemeMatch')" class="bg-blue-400 hover:bg-blue-500 text-blue-900 rounded-2xl p-6 shadow-xl transform transition hover:-translate-y-2 font-bold text-xl flex flex-col items-center gap-2 border-4 border-blue-300">
+                        <span class="text-4xl">🧩</span>
+                        Missing Letter
+                    </button>
+                    <button onclick="startMode('amharicMatch')" class="bg-purple-400 hover:bg-purple-500 text-purple-900 rounded-2xl p-6 shadow-xl transform transition hover:-translate-y-2 font-bold text-xl flex flex-col items-center gap-2 border-4 border-purple-300">
+                        <span class="text-4xl">🌍</span>
+                        Amharic Match
+                    </button>
+                </div>
+            `;
+        }
+
+        function getTopBarHtml(title) {
+            return `
+                <div class="w-full flex justify-between items-center mb-6">
+                    <button onclick="renderMenu()" class="bg-gray-200 hover:bg-gray-300 p-2 rounded-full text-gray-700 transition">
+                        ${SVGS.home}
+                    </button>
+                    <h2 class="text-2xl brand-font text-gray-700">${title}</h2>
+                    <div class="w-10"></div> <!-- Spacer for centering -->
+                </div>
+            `;
+        }
+
+        function shuffleArray(array) {
+            let curId = array.length;
+            while (0 !== curId) {
+                let randId = Math.floor(Math.random() * curId);
+                curId -= 1;
+                let tmp = array[curId];
+                array[curId] = array[randId];
+                array[randId] = tmp;
+            }
+            return array;
+        }
+
+        function startMode(mode) {
+            currentItemIndex = 0;
+            score = 0;
+            if (mode === 'flashcards') renderFlashcards();
+            if (mode === 'listenMatch') renderListenMatch();
+            if (mode === 'phonemeMatch') renderPhonemeMatch();
+            if (mode === 'amharicMatch') renderAmharicMatch();
+        }
+
+        // --- Game 1: Interactive Flashcards ---
+        function renderFlashcards() {
+            const word = wordsData[currentItemIndex];
+            
+            mainContent.innerHTML = `
+                ${getTopBarHtml('Flashcards')}
+                <div class="flex flex-col items-center w-full">
+                    <div class="bg-white rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border-4 border-gray-100 mb-6">
+                        <img src="${word.img}" alt="${word.eng}" class="w-48 h-48 object-cover mx-auto rounded-2xl mb-4 shadow-sm border-2 border-gray-100">
+                        
+                        <div class="flex justify-center mb-5">
+                            <span class="bg-yellow-300 text-yellow-900 brand-font text-4xl px-6 py-2 rounded-2xl border-4 border-yellow-400 shadow-md transform hover:scale-105 transition">
+                                / i / = / ኢ /
+                            </span>
+                        </div>
+                        
+                        <div class="flex justify-center items-center gap-4 mb-4">
+                            <h3 class="text-5xl brand-font text-indigo-600">${word.eng}</h3>
+                            ${getAudioBtnHtml(word.eng)}
+                        </div>
+                        
+                        <div class="bg-indigo-50 rounded-xl p-4 mt-4">
+                            <p class="text-xl text-indigo-900 font-bold mb-1">${word.amh}</p>
+                            <p class="text-md text-indigo-600 italic">(${word.pron})</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex gap-4">
+                        <button onclick="prevFlashcard()" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-xl transition">Previous</button>
+                        <button onclick="nextFlashcard()" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-3 px-6 rounded-xl transition flex items-center gap-2">Next ${SVGS.arrowRight}</button>
+                    </div>
+                </div>
+            `;
+            // Auto play audio on load
+            setTimeout(() => playAudio(word.eng), 300);
+        }
+
+        function nextFlashcard() {
+            currentItemIndex = (currentItemIndex + 1) % wordsData.length;
+            renderFlashcards();
+        }
+
+        function prevFlashcard() {
+            currentItemIndex = (currentItemIndex - 1 + wordsData.length) % wordsData.length;
+            renderFlashcards();
+        }
+
+        // --- Game 2: Listen & Match Image ---
+        function renderListenMatch() {
+            const word = wordsData[currentItemIndex];
+            
+            // Get 2 wrong options + 1 correct
+            let options = shuffleArray([...wordsData]).filter(w => w.eng !== word.eng).slice(0, 2);
+            options.push(word);
+            options = shuffleArray(options);
+
+            mainContent.innerHTML = `
+                ${getTopBarHtml('Listen & Match')}
+                <div class="text-center w-full">
+                    <p class="text-xl font-bold mb-4">Listen to the word and click the matching picture!</p>
+                    
+                    <div class="mb-8 flex flex-col items-center gap-4">
+                        ${getAudioBtnHtml(word.eng, 'w-20 h-20 flex justify-center items-center [&>svg]:w-10 [&>svg]:h-10 bg-pink-500 hover:bg-pink-600')}
+                        <span class="text-lg font-bold text-gray-500">Click to listen</span>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto" id="options-container">
+                        ${options.map((opt, idx) => `
+                            <button onclick="checkListenMatch(this, '${opt.eng}', '${word.eng}')" class="bg-white p-4 rounded-3xl shadow-lg border-4 border-gray-200 hover:border-pink-400 transform transition hover:scale-105 overflow-hidden flex flex-col items-center gap-2">
+                                <img src="${opt.img}" alt="Option" class="w-full h-40 object-cover rounded-xl pointer-events-none">
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="next-btn-container" class="mt-8 hidden">
+                        <button onclick="nextListenMatch()" class="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transition animate-bounce flex items-center gap-2 mx-auto">
+                            Great! Next Word ${SVGS.arrowRight}
+                        </button>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => playAudio(word.eng), 300);
+        }
+
+        function checkListenMatch(btnElement, selectedWord, correctWord) {
+            // Prevent multiple clicks
+            if(document.getElementById('next-btn-container').classList.contains('hidden') === false) return;
+
+            if (selectedWord === correctWord) {
+                btnElement.classList.remove('border-gray-200', 'hover:border-pink-400');
+                btnElement.classList.add('border-green-500', 'bg-green-100', 'animate-bounce-scale');
+                playAudio("Correct! " + correctWord);
+                document.getElementById('next-btn-container').classList.remove('hidden');
+            } else {
+                btnElement.classList.remove('border-gray-200');
+                btnElement.classList.add('border-red-500', 'bg-red-50', 'animate-shake');
+                playAudio("Try again!");
+                setTimeout(() => {
+                    btnElement.classList.remove('border-red-500', 'bg-red-50', 'animate-shake');
+                    btnElement.classList.add('border-gray-200');
+                }, 800);
+            }
+        }
+
+        function nextListenMatch() {
+            currentItemIndex = (currentItemIndex + 1) % wordsData.length;
+            renderListenMatch();
+        }
+
+        // --- Game 3: Click Correct Phoneme (Missing Letter) ---
+        function renderPhonemeMatch() {
+            const word = wordsData[currentItemIndex];
+            
+            // Get 3 wrong initial consonants
+            let allConsonants = ["B", "C", "D", "F", "G", "H", "J", "K", "L", "M", "N", "P", "R", "S", "T", "V", "W", "Z"];
+            let options = shuffleArray(allConsonants).filter(c => c !== word.ph_start).slice(0, 3);
+            options.push(word.ph_start);
+            options = shuffleArray(options);
+
+            mainContent.innerHTML = `
+                ${getTopBarHtml('Missing Letter')}
+                <div class="text-center w-full max-w-2xl">
+                    <img src="${word.img}" alt="Hint" class="w-40 h-40 object-cover mx-auto rounded-2xl shadow-md border-4 border-white mb-6">
+                    
+                    <div class="flex justify-center items-center gap-4 mb-8">
+                        <div class="bg-gray-800 text-white px-8 py-4 rounded-2xl text-6xl brand-font tracking-widest shadow-inner flex items-baseline">
+                            <span id="missing-letter" class="text-yellow-400 border-b-4 border-yellow-400 inline-block min-w-[1em] text-center">_</span>
+                            <span>${word.ph_rest}</span>
+                        </div>
+                        ${getAudioBtnHtml(word.eng)}
+                    </div>
+                    
+                    <p class="text-xl font-bold mb-4 text-gray-600">Which letter makes the sound?</p>
+
+                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="phoneme-options">
+                        ${options.map(letter => `
+                            <button onclick="checkPhonemeMatch(this, '${letter}', '${word.ph_start}', '${word.eng}')" class="bg-cyan-400 hover:bg-cyan-500 text-white text-5xl brand-font py-6 rounded-2xl shadow-lg transform transition hover:scale-110 active:scale-95 border-b-4 border-cyan-600">
+                                ${letter}
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="next-btn-container" class="mt-8 hidden">
+                        <button onclick="nextPhonemeMatch()" class="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transition animate-bounce flex items-center gap-2 mx-auto">
+                            Awesome! Next ${SVGS.arrowRight}
+                        </button>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => playAudio(word.eng), 300);
+        }
+
+        function checkPhonemeMatch(btnElement, selectedLetter, correctLetter, fullWord) {
+            if(document.getElementById('next-btn-container').classList.contains('hidden') === false) return;
+
+            if (selectedLetter === correctLetter) {
+                btnElement.classList.add('bg-green-500', 'border-green-700', 'animate-bounce-scale');
+                btnElement.classList.remove('bg-cyan-400', 'border-cyan-600', 'hover:bg-cyan-500');
+                
+                document.getElementById('missing-letter').innerText = correctLetter;
+                document.getElementById('missing-letter').classList.remove('border-b-4', 'text-yellow-400');
+                document.getElementById('missing-letter').classList.add('text-green-400');
+                
+                playAudio(fullWord);
+                document.getElementById('next-btn-container').classList.remove('hidden');
+            } else {
+                btnElement.classList.add('bg-red-500', 'border-red-700', 'animate-shake');
+                btnElement.classList.remove('bg-cyan-400', 'border-cyan-600', 'hover:bg-cyan-500');
+                playAudio(selectedLetter);
+                setTimeout(() => {
+                    btnElement.classList.remove('bg-red-500', 'border-red-700', 'animate-shake');
+                    btnElement.classList.add('bg-cyan-400', 'border-cyan-600', 'hover:bg-cyan-500');
+                }, 800);
+            }
+        }
+
+        function nextPhonemeMatch() {
+            currentItemIndex = (currentItemIndex + 1) % wordsData.length;
+            renderPhonemeMatch();
+        }
+
+        // --- Game 4: Amharic vs English Match ---
+        function renderAmharicMatch() {
+            const word = wordsData[currentItemIndex];
+            
+            // Get 2 wrong Amharic meanings
+            let options = shuffleArray([...wordsData]).filter(w => w.amh !== word.amh).slice(0, 2);
+            options.push(word);
+            options = shuffleArray(options);
+
+            mainContent.innerHTML = `
+                ${getTopBarHtml('Amharic Match')}
+                <div class="text-center w-full max-w-3xl">
+                    
+                    <div class="bg-orange-100 p-8 rounded-3xl mb-8 shadow-inner border-4 border-orange-200">
+                        <div class="flex justify-center items-center gap-6">
+                            <h3 class="text-6xl brand-font text-orange-600">${word.eng}</h3>
+                            ${getAudioBtnHtml(word.eng, 'w-16 h-16 flex justify-center items-center [&>svg]:w-8 [&>svg]:h-8')}
+                        </div>
+                    </div>
+
+                    <p class="text-xl font-bold mb-6 text-gray-700">What does it mean in Amharic?</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        ${options.map(opt => `
+                            <button onclick="checkAmharicMatch(this, '${opt.amh}', '${word.amh}')" class="bg-white p-6 rounded-2xl shadow-md border-4 border-purple-100 hover:border-purple-400 transform transition hover:-translate-y-1 flex flex-col items-center gap-3">
+                                <span class="text-3xl font-bold text-gray-800">${opt.amh}</span>
+                                <span class="text-md text-gray-500 bg-gray-100 px-3 py-1 rounded-full">${opt.pron}</span>
+                            </button>
+                        `).join('')}
+                    </div>
+
+                    <div id="next-btn-container" class="mt-8 hidden">
+                        <button onclick="nextAmharicMatch()" class="bg-green-500 hover:bg-green-600 text-white text-xl font-bold py-3 px-8 rounded-full shadow-lg transition animate-bounce flex items-center gap-2 mx-auto">
+                            Correct! Next ${SVGS.arrowRight}
+                        </button>
+                    </div>
+                </div>
+            `;
+            setTimeout(() => playAudio(word.eng), 300);
+        }
+
+        function checkAmharicMatch(btnElement, selectedAmh, correctAmh) {
+            if(document.getElementById('next-btn-container').classList.contains('hidden') === false) return;
+
+            if (selectedAmh === correctAmh) {
+                btnElement.classList.add('bg-green-100', 'border-green-500', 'animate-bounce-scale');
+                btnElement.classList.remove('border-purple-100', 'hover:border-purple-400', 'bg-white');
+                playAudio("Excellent!");
+                document.getElementById('next-btn-container').classList.remove('hidden');
+            } else {
+                btnElement.classList.add('bg-red-50', 'border-red-500', 'animate-shake');
+                btnElement.classList.remove('border-purple-100', 'hover:border-purple-400', 'bg-white');
+                setTimeout(() => {
+                    btnElement.classList.remove('bg-red-50', 'border-red-500', 'animate-shake');
+                    btnElement.classList.add('bg-white', 'border-purple-100', 'hover:border-purple-400');
+                }, 800);
+            }
+        }
+
+        function nextAmharicMatch() {
+            currentItemIndex = (currentItemIndex + 1) % wordsData.length;
+            renderAmharicMatch();
+        }
+
+        // Initialize App
+        window.onload = () => {
+            renderMenu();
+        };
+
+    </script>
+</body>
+</html>
